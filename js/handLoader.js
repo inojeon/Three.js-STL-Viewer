@@ -2,19 +2,17 @@ if ( ! Detector.webgl ) Detector.addGetWebGLMessage();
 
 var camera, scene, renderer;
 
-init();
-
 function init() {
 
   scene = new THREE.Scene();
-  scene.add( new THREE.AmbientLight( 0x999999 ) );
+  scene.add( new THREE.AmbientLight( 0xaaaaaa ) );
 
   camera = new THREE.PerspectiveCamera( 35, window.innerWidth / window.innerHeight, 1, 500 );
 
   // Z is up for objects intended to be 3D printed.
 
   camera.up.set( 0, 0, 1 );
-  camera.position.set( 0, -9, 6 );
+  camera.position.set( 50, 50, 50 );
 
   camera.add( new THREE.PointLight( 0xffffff, 0.8 ) );
 
@@ -31,30 +29,39 @@ function init() {
   document.body.appendChild( renderer.domElement );
 
   var loader = new THREE.STLLoader();
+  var material = new THREE.MeshPhongMaterial( { color: 0x2194ce } );
 
+  loader.load( './filter_geometry.stl', function ( geometry ) {
+  
+  	var geo = new THREE.EdgesGeometry( geometry ); // or WireframeGeometry( geometry )
+	var mat = new THREE.LineBasicMaterial( { 
+		color: 0,
+		linewidth: 10,
+   		vertexColors: THREE.VertexColors
+	} );
+	var wireframe = new THREE.LineSegments( geo, mat );
 
-  // Binary files
+   	var mesh = new THREE.Mesh( geometry, material );
 
-  var material = new THREE.MeshPhongMaterial( { color: 0x0e2045, specular: 0x111111, shininess: 200 } );
-  loader.load( 'https://s3.amazonaws.com/limbforgestls/EbeArm/Ebe_forearm_L/forearm_L_C4-200_L1-230.stl', function ( geometry ) {
-    var mesh = new THREE.Mesh( geometry, material );
-
-    mesh.position.set( 0, 0, 0 );
-    mesh.rotation.set( 0, 0, 0 );
-    mesh.scale.set( .02, .02, .02 );
-
-    mesh.castShadow = true;
-    mesh.receiveShadow = true;
-
-    scene.add( mesh );
-    render();
-  });
+//   mesh.position.set( 0, 0, 0.6 );
+   	mesh.rotation.set( 0, 0, Math.PI / 2 );
+   	wireframe.rotation.set( 0, 0, Math.PI / 2 );
+ 
+   	mesh.castShadow = true;
+   	mesh.receiveShadow = true;
+   
+   	scene.add( mesh );
+   	scene.add( wireframe );
+   	render();
+  } );
 
   var controls = new THREE.OrbitControls( camera, renderer.domElement );
   controls.addEventListener( 'change', render );
   controls.target.set( 0, 1.2, 2 );
   controls.update();
   window.addEventListener( 'resize', onWindowResize, false );
+
+
 
 }
 

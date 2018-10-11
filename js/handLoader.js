@@ -31,10 +31,10 @@ function init() {
   var loader = new THREE.STLLoader();
   var material = new THREE.MeshPhongMaterial( { color: 0x2194ce } );
 
-  loader.load( './filter_geometry.stl', function ( geometry ) {
-  
-  	var geo = new THREE.EdgesGeometry( geometry ); // or WireframeGeometry( geometry )
-	var mat = new THREE.LineBasicMaterial( { 
+  loader.load( './filter_geometry.js', function ( geometry ) {
+
+  	var geo = new THREE.EdgesGeometry( geometry );
+	var mat = new THREE.LineBasicMaterial( {
 		color: 0,
 		linewidth: 10,
    		vertexColors: THREE.VertexColors
@@ -46,10 +46,10 @@ function init() {
 //   mesh.position.set( 0, 0, 0.6 );
    	mesh.rotation.set( 0, 0, Math.PI / 2 );
    	wireframe.rotation.set( 0, 0, Math.PI / 2 );
- 
+
    	mesh.castShadow = true;
    	mesh.receiveShadow = true;
-   
+
    	scene.add( mesh );
    	scene.add( wireframe );
    	render();
@@ -61,7 +61,8 @@ function init() {
   controls.update();
   window.addEventListener( 'resize', onWindowResize, false );
 
-
+  // helper
+  scene.add( new THREE.AxesHelper( 100 ) );
 
 }
 
